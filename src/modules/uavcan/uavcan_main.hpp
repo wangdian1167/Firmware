@@ -47,11 +47,14 @@
 #include "actuators/esc.hpp"
 #include "sensors/sensor_bridge.hpp"
 
+#define UAVCAN_FW_SERVER
 
+#if defined(UAVCAN_FW_SERVER)
 #include <uavcan/protocol/dynamic_node_id_server/centralized.hpp>
 #include <uavcan/protocol/node_info_retriever.hpp>
 #include <uavcan/protocol/firmware_update_trigger.hpp>
 #include <uavcan/protocol/file_server.hpp>
+#endif
 
 
 /**
@@ -146,15 +149,19 @@ private:
 	unsigned		_output_count = 0;		///< number of actuators currently available
 
 	static UavcanNode	*_instance;			///< singleton pointer
+#if defined(UAVCAN_FW_SERVER)
 	static uavcan::dynamic_node_id_server::CentralizedServer *_server_instance;              ///< server singleton pointer
+#endif
 	Node			_node;				///< library instance
 	pthread_mutex_t		_node_mutex;
 
 	UavcanEscController	_esc_controller;
 
+#if defined(UAVCAN_FW_SERVER)
         uavcan::NodeInfoRetriever  _node_info_retriever;
         uavcan::FirmwareUpdateTrigger  _fw_upgrade_trigger;
         uavcan::BasicFileServer        _fw_server;
+#endif
 
 	List<IUavcanSensorBridge *> _sensor_bridges;		///< List of active sensor bridges
 
